@@ -19,8 +19,11 @@ jobs:
   # fmt + validate — fast checks, no AWS needed
   # ──────────────────────────────────────────────
   validate:
-    name: Validate
+    name: Validate (${{ github.event.inputs.environment || 'dev' }})
     runs-on: [self-hosted, linux, x64]
+
+    env:
+      TF_ENV: ${{ github.event.inputs.environment || 'dev' }}
 
     steps:
       - name: Checkout
@@ -33,23 +36,11 @@ jobs:
 
       - name: Terraform Format Check
         run: terraform fmt -check -recursive snappaste-infra/terraform/
-        # Fails if any .tf file has wrong formatting
+        # Checks ALL .tf files for formatting — cheap, always worth running
         # Fix locally with: terraform fmt -recursive snappaste-infra/terraform/
 
-      - name: Terraform Validate (dev)
-        working-directory: snappaste-infra/terraform/environments/dev
-        run: |
-          terraform init -backend=false
-          terraform validate
-
-      - name: Terraform Validate (staging)
-        working-directory: snappaste-infra/terraform/environments/staging
-        run: |
-          terraform init -backend=false
-          terraform validate
-
-      - name: Terraform Validate (prod)
-        working-directory: snappaste-infra/terraform/environments/prod
+      - name: Terraform Validate
+        working-directory: snappaste-infra/terraform/environments/${{ env.TF_ENV }}
         run: |
           terraform init -backend=false
           terraform validate
