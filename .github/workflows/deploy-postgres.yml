@@ -45,6 +45,6 @@ jobs:
 
       - name: Verify Postgres is running
         run: |
-          kubectl rollout status statefulset/snappaste-postgres \
+          kubectl rollout status statefulset/postgres \
             --namespace ${{ env.K8S_NAMESPACE }} \
             --timeout 3m
