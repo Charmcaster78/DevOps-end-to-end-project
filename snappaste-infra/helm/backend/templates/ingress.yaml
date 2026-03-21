@@ -7,6 +7,8 @@ metadata:
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.name: snappaste
+    alb.ingress.kubernetes.io/group.order: "10"
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   rules:
