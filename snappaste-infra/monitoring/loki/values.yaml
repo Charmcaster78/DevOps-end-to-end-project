@@ -11,6 +11,9 @@ deploymentMode: SingleBinary
 
 singleBinary:
   replicas: 1
+  persistence:
+    storageClass: gp2
+    size: 10Gi
 
 # Explicitly zero out all other deployment modes
 read:
