@@ -60,6 +60,14 @@ dashboards:
       gnetId: 15760     # Kubernetes / Views / Pods — per-pod drill down
       revision: 37
       datasource: Mimir
+    k8s-logs-pod:
+      gnetId: 15141     # Kubernetes / Logs / Pod — logs for a specific pod
+      revision: 1
+      datasource: Loki
+    k8s-logs-cluster:
+      gnetId: 15142     # Kubernetes / Logs / Cluster — all pod logs in one view
+      revision: 1
+      datasource: Loki
 
 # Resource limits
 resources:
