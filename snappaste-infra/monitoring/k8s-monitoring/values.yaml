@@ -1,0 +1,53 @@
+# ──────────────────────────────────────────────
+# k8s-monitoring — Grafana Alloy + kube-state-metrics + node-exporter
+# Chart: grafana/k8s-monitoring
+#
+# This single chart installs:
+#   - Grafana Alloy (collects metrics + ships logs)
+#   - kube-state-metrics (K8s object state metrics)
+#   - node-exporter (node CPU/memory/disk metrics)
+# ──────────────────────────────────────────────
+
+cluster:
+  name: snappaste-dev-eks
+
+# ── Send metrics to Mimir ──
+destinations:
+  - name: mimir
+    type: prometheus
+    url: http://mimir-nginx.monitoring.svc.cluster.local/api/v1/push
+
+  - name: loki
+    type: loki
+    url: http://loki.monitoring.svc.cluster.local/loki/api/v1/push
+
+# ── What to collect ──
+clusterMetrics:
+  enabled: true             # kube-state-metrics + node-exporter + K8s metrics
+
+clusterEvents:
+  enabled: true             # K8s events as logs → Loki
+
+podLogs:
+  enabled: true             # all pod stdout/stderr → Loki
+
+applicationObservability:
+  enabled: false            # disable OpenTelemetry for now
+
+annotationAutodiscovery:
+  enabled: true             # scrape pods with prometheus.io/scrape: "true" annotation
+
+# ── kube-state-metrics ──
+kube-state-metrics:
+  enabled: true
+
+# ── node-exporter ──
+node-exporter:
+  enabled: true
+
+# ── Alloy config ──
+alloy-metrics:
+  enabled: true
+
+alloy-logs:
+  enabled: true

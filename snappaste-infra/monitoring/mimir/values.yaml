@@ -1,0 +1,77 @@
+# ──────────────────────────────────────────────
+# Mimir — Metrics storage backed by S3
+# Chart: grafana/mimir-distributed
+#
+# Before installing, get bucket name from Terraform:
+#   terraform output mimir_bucket_name
+#   terraform output mimir_role_arn
+# ──────────────────────────────────────────────
+
+# Single-zone deployment — simple, no HA (fine for dev/learning)
+# All components run with 1 replica
+alertmanager:
+  replicas: 1
+  zoneAwareReplication:
+    enabled: false
+
+distributor:
+  replicas: 1
+
+ingester:
+  replicas: 1
+  zoneAwareReplication:
+    enabled: false
+
+querier:
+  replicas: 1
+
+queryFrontend:
+  replicas: 1
+
+queryScheduler:
+  replicas: 1
+
+ruler:
+  replicas: 1
+
+storeGateway:
+  replicas: 1
+  zoneAwareReplication:
+    enabled: false
+
+compactor:
+  replicas: 1
+
+# S3 storage config
+# Replace MIMIR_BUCKET_NAME with: terraform output mimir_bucket_name
+mimir:
+  structuredConfig:
+    common:
+      storage:
+        backend: s3
+        s3:
+          bucket_name: MIMIR_BUCKET_NAME    # ← replace with terraform output
+          region: us-east-1
+
+    blocks_storage:
+      s3:
+        bucket_name: MIMIR_BUCKET_NAME      # ← replace with terraform output
+
+    alertmanager_storage:
+      s3:
+        bucket_name: MIMIR_BUCKET_NAME      # ← replace with terraform output
+
+    ruler_storage:
+      s3:
+        bucket_name: MIMIR_BUCKET_NAME      # ← replace with terraform output
+
+# Service account — must match Pod Identity association in Terraform
+serviceAccount:
+  name: mimir
+  annotations:
+    # No annotation needed — Pod Identity uses agent, not IRSA
+    {}
+
+# Disable MinIO — we use S3
+minio:
+  enabled: false
